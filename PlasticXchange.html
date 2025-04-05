@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PlasticXchange – Nachhaltige Innovation</title>
+  <!-- Chart.js (für den Statistik-Bereich) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    /* Reset & Grundstile */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #e8f5e9;
+      color: #2e7d32;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* Header & Navigation */
+    header {
+      background-color: #1b5e20;
+      padding: 20px;
+      position: sticky;
+      top: 0;
+      width: 100%;
+      z-index: 1000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header img.logo {
+      width: 120px;
+      animation: fadeInDown 1s ease forwards;
+    }
+    .nav-toggle {
+      font-size: 28px;
+      color: #fff;
+      cursor: pointer;
+      display: none; /* wird auf mobilen Geräten angezeigt */
+      transition: color 0.3s ease;
+    }
+    .nav-toggle:hover {
+      color: #a5d6a7;
+    }
+    nav {
+      display: flex;
+    }
+    nav ul {
+      list-style: none;
+      display: flex;
+    }
+    nav ul li {
+      margin: 0 15px;
+      position: relative;
+    }
+    nav ul li a {
+      color: #fff;
+      font-weight: bold;
+      transition: color 0.3s ease;
+    }
+    nav ul li a:hover {
+      color: #a5d6a7;
+    }
+    
+    /* Responsive Hamburger-Menü */
+    @media (max-width: 768px) {
+      .nav-toggle {
+        display: block;
+      }
+      nav {
+        position: absolute;
+        top: 70px;
+        right: 20px;
+        background-color: #1b5e20;
+        border-radius: 5px;
+        flex-direction: column;
+        width: 200px;
+        display: none;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+      nav.show {
+        display: flex;
+        opacity: 1;
+      }
+      nav ul {
+        flex-direction: column;
+      }
+      nav ul li {
+        margin: 10px 0;
+      }
+    }
+    
+    /* Hero Section */
+    .hero {
+      background: linear-gradient(135deg, #a5d6a7, #81c784);
+      height: 80vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero h1 {
+      font-size: 3.5rem;
+      color: #fff;
+      margin-bottom: 20px;
+      animation: fadeInUp 1.5s ease forwards;
+    }
+    .hero p {
+      font-size: 1.2rem;
+      color: #e8f5e9;
+      max-width: 700px;
+      margin: auto;
+      animation: fadeInUp 2s ease forwards;
+    }
+    
+    /* Allgemeine Abschnitte (Über uns, Ziel, Vorteile etc.) */
+    section {
+      padding: 60px 20px;
+      text-align: center;
+    }
+    section h2 {
+      font-size: 2.8rem;
+      margin-bottom: 20px;
+      animation: fadeInDown 1s ease forwards;
+    }
+    section p {
+      font-size: 1.1rem;
+      max-width: 800px;
+      margin: auto;
+      color: #555;
+      margin-bottom: 30px;
+      animation: fadeIn 1.5s ease forwards;
+    }
+    
+    /* Team Section – verkleinerte Boxen */
+    #team {
+      padding: 60px 20px;
+      background-color: #f9fff9;
+      text-align: center;
+    }
+    #team h2 {
+      font-size: 2.8rem;
+      margin-bottom: 40px;
+      animation: fadeInDown 1s ease forwards;
+    }
+    .team-container {
+      max-width: 700px;
+      margin: auto;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      gap: 10px;
+    }
+    .team-member {
+      background: #fff;
+      padding: 10px 15px;
+      border-radius: 6px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      flex: 1 1 150px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .team-member:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 12px rgba(0,0,0,0.1);
+    }
+    .team-member h3 {
+      font-size: 1.4rem;
+      color: #2e7d32;
+      margin-bottom: 5px;
+    }
+    .team-member p {
+      font-size: 0.9rem;
+      color: #555;
+    }
+    
+    /* Statistiken Section */
+    #statistiken {
+      padding: 60px 20px;
+      background-color: #fff;
+      text-align: center;
+    }
+    #statistiken h2 {
+      font-size: 2.8rem;
+      margin-bottom: 40px;
+      animation: fadeInDown 1s ease forwards;
+    }
+    .stat-section {
+      margin-bottom: 60px;
+    }
+    .stat-section h3 {
+      font-size: 1.8rem;
+      margin-bottom: 20px;
+      color: #1b5e20;
+    }
+    .stat-section p {
+      font-size: 1rem;
+      max-width: 800px;
+      margin: auto;
+      color: #555;
+      margin-bottom: 10px;
+    }
+    /* Zusätzlicher Absatz, was wir verbessern können */
+    .improvement {
+      font-size: 0.95rem;
+      max-width: 800px;
+      margin: 10px auto 0;
+      color: #2e7d32;
+      font-weight: bold;
+    }
+    .chart-container {
+      width: 90%;
+      max-width: 600px;
+      margin: 20px auto;
+      background: #f1f8e9;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .source {
+      font-size: 0.9rem;
+      color: #888;
+      margin-top: 5px;
+    }
+    
+    /* Events Section – kompaktere Boxen */
+    #events {
+      padding: 60px 20px;
+      background-color: #f9fff9;
+      text-align: center;
+    }
+    #events h2 {
+      font-size: 2.8rem;
+      margin-bottom: 40px;
+      animation: fadeInDown 1s ease forwards;
+    }
+    #addEventButton {
+      background-color: #2e7d32;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1rem;
+      margin-bottom: 20px;
+      transition: background 0.3s ease;
+    }
+    #addEventButton:hover {
+      background-color: #1f5320;
+    }
+    #eventFormContainer {
+      margin-bottom: 40px;
+      padding: 15px;
+      background: #fff;
+      border: 2px solid #2e7d32;
+      border-radius: 10px;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+      display: none;
+    }
+    #eventFormContainer input,
+    #eventFormContainer textarea {
+      width: 100%;
+      padding: 8px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    #eventFormContainer button {
+      background-color: #2e7d32;
+      color: #fff;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    .event-box {
+      background: #fff;
+      border: 2px solid #81c784;
+      border-radius: 10px;
+      padding: 15px;
+      margin: 10px auto;
+      max-width: 500px;
+      text-align: left;
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .event-box:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 12px rgba(0,0,0,0.1);
+    }
+    .event-header {
+      font-size: 1.2rem;
+      color: #1b5e20;
+      margin-bottom: 5px;
+    }
+    .event-date, .event-location, .event-summary {
+      font-size: 0.9rem;
+      color: #555;
+      margin-bottom: 5px;
+    }
+    .event-details {
+      font-size: 0.85rem;
+      color: #444;
+      display: none;
+      padding-top: 5px;
+      border-top: 1px solid #ccc;
+    }
+    
+    /* Karriere / Bewerbung Section */
+    #karriere {
+      background-color: #f1f8e9;
+      padding: 60px 20px;
+      text-align: center;
+    }
+    #karriere h2 {
+      font-size: 2.8rem;
+      margin-bottom: 20px;
+      animation: fadeInDown 1s ease forwards;
+    }
+    #karriere p {
+      font-size: 1.1rem;
+      max-width: 800px;
+      margin: auto;
+      color: #555;
+      margin-bottom: 20px;
+      animation: fadeIn 1.5s ease forwards;
+    }
+    #karriere form {
+      max-width: 500px;
+      margin: auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      text-align: left;
+    }
+    #karriere form input, 
+    #karriere form select, 
+    #karriere form textarea {
+      width: 100%;
+      padding: 8px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    /* Neues Dateieingabefeld für den Lebenslauf */
+    #karriere form input[type="file"] {
+      padding: 4px;
+    }
+    #karriere form button {
+      background-color: #2e7d32;
+      color: #fff;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    
+    /* Kontakt Section */
+    #contact {
+      background-color: #fff;
+      padding: 60px 20px;
+      text-align: center;
+    }
+    #contact h2 {
+      font-size: 2.8rem;
+      margin-bottom: 20px;
+      animation: fadeInDown 1s ease forwards;
+    }
+    #contact p {
+      font-size: 1.1rem;
+      color: #555;
+      margin-bottom: 10px;
+      animation: fadeIn 1.5s ease forwards;
+    }
+    #contact .email {
+      font-weight: bold;
+      font-size: 1.2rem;
+      color: #2e7d32;
+    }
+    
+    /* Footer */
+    footer {
+      background-color: #1b5e20;
+      color: #fff;
+      text-align: center;
+      padding: 20px;
+      font-size: 0.9rem;
+    }
+    footer p.collab {
+      margin-top: 10px;
+      font-size: 0.8rem;
+      color: #ccc;
+    }
+    
+    /* Animationen */
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    /* Responsive Anpassungen */
+    @media (max-width: 768px) {
+      .team-container, .chart-container {
+        flex-direction: column;
+        align-items: center;
+      }
+      nav {
+        width: 80%;
+        right: 10%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <img src="IMG_7316.png" alt="PlasticXchange Logo" class="logo">
+    <div class="nav-toggle" id="navToggle">&#9776;</div>
+    <nav id="navbar">
+      <ul>
+        <li><a href="#home" onclick="toggleNav()">Home</a></li>
+        <li><a href="#about" onclick="toggleNav()">Über uns</a></li>
+        <li><a href="#ziel" onclick="toggleNav()">Unser Ziel</a></li>
+        <li><a href="#vorteile" onclick="toggleNav()">Vorteile</a></li>
+        <li><a href="#team" onclick="toggleNav()">Team</a></li>
+        <li><a href="#statistiken" onclick="toggleNav()">Statistiken</a></li>
+        <li><a href="#events" onclick="toggleNav()">Events</a></li>
+        <li><a href="#karriere" onclick="toggleNav()">Karriere</a></li>
+        <li><a href="#contact" onclick="toggleNav()">Kontakt</a></li>
+      </ul>
+    </nav>
+  </header>
+  
+  <!-- Hero Section -->
+  <section class="hero" id="home">
+    <div>
+      <h1>Willkommen bei PlasticXchange</h1>
+      <p>Innovative Recycling-Lösungen für eine nachhaltige Zukunft – wir verwandeln Abfall in Ressource.</p>
+    </div>
+  </section>
+  
+  <!-- Über uns Section -->
+  <section id="about">
+    <h2>Über PlasticXchange</h2>
+    <p>PlasticXchange steht für modernste Recyclingtechnologien und eine nachhaltige Kreislaufwirtschaft. Unser Ziel ist es, Kunststoffabfälle in wertvolle Ressourcen umzuwandeln und aktiv zum Umweltschutz beizutragen.</p>
+    <p class="ceo">Omar Yacoubi, CEO</p>
+  </section>
+  
+  <!-- Unser Ziel Section -->
+  <section id="ziel">
+    <h2>Unser Ziel</h2>
+    <p>Wir wollen den Status Quo im Recycling revolutionieren. Mit innovativen Ansätzen und modernsten Technologien steigern wir die Effizienz im Umgang mit Plastikabfällen und senken gleichzeitig den ökologischen Fußabdruck. Unser Ziel: Eine Zukunft, in der Recycling nicht nur eine Notwendigkeit, sondern ein Gewinn für Umwelt und Wirtschaft ist.</p>
+  </section>
+  
+  <!-- Vorteile & Leistungen Section -->
+  <section id="vorteile">
+    <h2>Unsere Vorteile und Leistungen</h2>
+    <div class="vorteil-container">
+      <div class="vorteil">
+        <h3>Innovative Technologien</h3>
+        <p>Modernste Verfahren transformieren Plastikabfälle in wertvolle Materialien – effizient und umweltfreundlich.</p>
+      </div>
+      <div class="vorteil">
+        <h3>Nachhaltigkeit</h3>
+        <p>Unsere Prozesse minimieren den ökologischen Fußabdruck und fördern den Erhalt natürlicher Ressourcen.</p>
+      </div>
+      <div class="vorteil">
+        <h3>Wirtschaftliche Chancen</h3>
+        <p>Neue Märkte und nachhaltiges Wachstum stehen im Fokus – Recycling als wirtschaftlicher Motor.</p>
+      </div>
+      <div class="vorteil">
+        <h3>Transparenz</h3>
+        <p>Klare Daten und Fakten belegen den Erfolg unserer Recyclingstrategien.</p>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Team Section -->
+  <section id="team">
+    <h2>Unser Team</h2>
+    <div class="team-container">
+      <div class="team-member">
+        <h3>Omar Yacoubi</h3>
+        <p>CEO</p>
+      </div>
+      <div class="team-member">
+        <h3>Faruk Ethem Özkan</h3>
+        <p>CTO</p>
+      </div>
+      <div class="team-member">
+        <h3>Sinan Astan</h3>
+        <p>COO</p>
+      </div>
+      <div class="team-member">
+        <h3>Raman Ibrahim</h3>
+        <p>CCO</p>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Statistiken Section -->
+  <section id="statistiken">
+    <h2>Statistiken der letzten 10 Jahre</h2>
+    
+    <!-- Statistik 1: Globale Plastikproduktion -->
+    <div class="stat-section">
+      <h3>Globale Plastikproduktion</h3>
+      <p>Im Jahr 2010 wurden weltweit ca. 250 Mio. Tonnen Plastik produziert, während 2020 über 380 Mio. Tonnen hergestellt wurden.</p>
+      <div class="chart-container">
+        <canvas id="globalProductionChart"></canvas>
+      </div>
+      <p class="source">Quelle: PlasticsEurope (https://www.plasticseurope.org)</p>
+      <p class="improvement">Wir streben an, durch innovative Recyclingtechnologien den Anstieg der Plastikproduktion abzuflachen und den Anteil recycelter Materialien zu erhöhen, um die Umweltbelastung zu reduzieren.</p>
+    </div>
+    
+    <!-- Statistik 2: Recyclingquote in Deutschland -->
+    <div class="stat-section">
+      <h3>Recyclingquote in Deutschland</h3>
+      <p>Die Recyclingquote in Deutschland ist von ca. 30 % im Jahr 2010 auf ca. 42 % im Jahr 2020 gestiegen.</p>
+      <div class="chart-container">
+        <canvas id="germanyRecyclingChart"></canvas>
+      </div>
+      <p class="source">Quelle: Umweltbundesamt (UBA), Statista (https://www.uba.de)</p>
+      <p class="improvement">Wir möchten diesen Trend fortsetzen, indem wir moderne Sortier- und Recyclingverfahren fördern und den öffentlichen Bewusstseinsprozess weiter verbessern.</p>
+    </div>
+    
+    <!-- Statistik 3: Export von nicht recycelten Abfällen -->
+    <div class="stat-section">
+      <h3>Export von nicht recycelten Abfällen</h3>
+      <p>Zwischen 2010 und 2020 stieg der Export von nicht recycelten Abfällen in Deutschland von ca. 600.000 Tonnen auf ca. 800.000 Tonnen.</p>
+      <div class="chart-container">
+        <canvas id="wasteExportChart"></canvas>
+      </div>
+      <p class="source">Quelle: Eurostat (https://ec.europa.eu/eurostat)</p>
+      <p class="improvement">Unser Ziel ist es, den Export von Abfällen zu reduzieren, indem wir die Recyclingquote erhöhen und lokale Recyclinglösungen fördern.</p>
+    </div>
+    
+    <!-- Statistik 4: Deponieanteil in Europa -->
+    <div class="stat-section">
+      <h3>Abfallmenge auf Deponien in Europa</h3>
+      <p>Der Anteil an Plastik, der auf Deponien landet, sank in Europa von ca. 45 % im Jahr 2010 auf ca. 30 % im Jahr 2020.</p>
+      <div class="chart-container">
+        <canvas id="landfillChart"></canvas>
+      </div>
+      <p class="source">Quelle: Europäische Kommission (https://ec.europa.eu)</p>
+      <p class="improvement">Wir arbeiten daran, die Deponierung von Plastik weiter zu verringern, indem wir innovative Recyclingmethoden und Wiederverwendungsstrategien vorantreiben.</p>
+    </div>
+    
+    <!-- Statistik 5: Investitionen in Recyclingtechnologien -->
+    <div class="stat-section">
+      <h3>Investitionen in Recyclingtechnologien</h3>
+      <p>Die Investitionen in Recyclingtechnologien haben sich in den letzten 10 Jahren von ca. 2 Mrd. € auf ca. 8 Mrd. € vervielfacht.</p>
+      <div class="chart-container">
+        <canvas id="investmentChart"></canvas>
+      </div>
+      <p class="source">Quelle: OECD (https://www.oecd.org)</p>
+      <p class="improvement">Wir wollen diese Investitionen weiter steigern, um innovative Technologien zur effektiven Wiederverwertung von Kunststoff zu entwickeln und den globalen Recyclingprozess zu optimieren.</p>
+    </div>
+  </section>
+  
+  <!-- Events Section mit erweiterten Feldern für Datum, Uhrzeit und Ort -->
+  <section id="events">
+    <h2>Events</h2>
+    <button id="addEventButton">Event hinzufügen</button>
+    <div id="eventFormContainer">
+      <input type="password" id="adminCode" placeholder="Admin-Code eingeben">
+      <button id="verifyCodeButton">Code überprüfen</button>
+      <div id="eventForm" style="display: none;">
+        <input type="text" id="eventTitle" placeholder="Event Titel" required>
+        <input type="date" id="eventDate" required>
+        <input type="time" id="eventTime" required>
+        <textarea id="eventSummary" placeholder="Kurze Zusammenfassung (wird in der Übersicht angezeigt)" required></textarea>
+        <textarea id="eventDetails" placeholder="Details zum Event (Materialien, Kosten, Hinweise etc.)" required></textarea>
+        <!-- Zusätzliche Felder für den Ort -->
+        <input type="text" id="eventCountry" placeholder="Land" required>
+        <input type="text" id="eventCity" placeholder="Stadt" required>
+        <input type="text" id="eventVenue" placeholder="Veranstaltungsort / genauer Ort" required>
+        <input type="text" id="eventStreet" placeholder="Straße" required>
+        <input type="number" id="eventNumber" placeholder="Hausnummer" required>
+        <input type="text" id="eventPostalCode" placeholder="Postleitzahl" required>
+        <button id="submitEventButton">Event absenden</button>
+      </div>
+    </div>
+    <div id="eventsContainer"></div>
+  </section>
+  
+  <!-- Karriere / Bewerbung Section -->
+  <section id="karriere">
+    <h2>Karriere</h2>
+    <p>Interessiert an einer Mitarbeit bei PlasticXchange? Füllen Sie bitte das folgende Formular aus. (Bitte beachten Sie: Bewerber müssen mindestens 18 Jahre alt sein.)</p>
+    <form id="bewerbungsForm">
+      <input type="text" id="bewerberName" placeholder="Ihr Name" required>
+      <input type="number" id="bewerberAlter" placeholder="Ihr Alter (Mindestalter: 18)" required>
+      <input type="text" id="bewerberWohnort" placeholder="Ihr Wohnort" required>
+      <select id="arbeitszeit" required>
+        <option value="">Arbeitszeit wählen</option>
+        <option value="Vollzeit">Vollzeit</option>
+        <option value="Teilzeit">Teilzeit</option>
+      </select>
+      <select id="geschlecht" required>
+        <option value="">Geschlecht wählen</option>
+        <option value="männlich">Männlich</option>
+        <option value="weiblich">Weiblich</option>
+        <option value="divers">Divers</option>
+      </select>
+      <textarea id="erfahrungen" placeholder="Beschreiben Sie kurz Ihre Erfahrungen und Qualifikationen" required></textarea>
+      <label for="lebenslauf">Lebenslauf (PDF, DOCX etc.)</label>
+      <input type="file" id="lebenslauf" required>
+      <button type="submit">Bewerbung absenden</button>
+    </form>
+  </section>
+  
+  <!-- Kontakt Section -->
+  <section id="contact">
+    <h2>Kontakt</h2>
+    <p>Für weitere Informationen oder Anfragen erreichen Sie uns unter:</p>
+    <p class="email">plasticXchange.Info@gmail.com</p>
+  </section>
+  
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 PlasticXchange. Alle Rechte vorbehalten.</p>
+    <p class="collab">Diese Website ist eine Kooperation zwischen PlasticXchange und dem Kant-Gymnasium Spandau.</p>
+  </footer>
+  
+  <!-- JavaScript: Navigation umschalten (für mobile Geräte) -->
+  <script>
+    const navToggle = document.getElementById('navToggle');
+    const navbar = document.getElementById('navbar');
+    navToggle.addEventListener('click', function() {
+      navbar.classList.toggle('show');
+    });
+    // Optional: Navigation schließen, wenn ein Link geklickt wird
+    function toggleNav() {
+      navbar.classList.remove('show');
+    }
+  </script>
+  
+  <!-- JavaScript: Chart.js Diagramme -->
+  <script>
+    // Statistik 1: Globale Plastikproduktion (Liniendiagramm)
+    const ctxGlobal = document.getElementById('globalProductionChart').getContext('2d');
+    new Chart(ctxGlobal, {
+      type: 'line',
+      data: {
+        labels: ['2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019', '2020'],
+        datasets: [{
+          label: 'Plastikproduktion (Mio. Tonnen)',
+          data: [250,260,270,280,300,320,340,360,375,385,380],
+          borderColor: '#81c784',
+          backgroundColor: 'rgba(129,199,132,0.2)',
+          fill: true,
+          tension: 0.3,
+          borderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          title: { display: true, text: 'Globale Plastikproduktion (2010 - 2020)' },
+          tooltip: { callbacks: { label: context => context.parsed.y + ' Mio. Tonnen' } }
+        },
+        scales: { y: { beginAtZero: false, title: { display: true, text: 'Mio. Tonnen' } } }
+      }
+    });
+    
+    // Statistik 2: Recyclingquote in Deutschland (Balkendiagramm)
+    const ctxGermany = document.getElementById('germanyRecyclingChart').getContext('2d');
+    new Chart(ctxGermany, {
+      type: 'bar',
+      data: {
+        labels: ['2010', '2012', '2014', '2016', '2018', '2020'],
+        datasets: [{
+          label: 'Recyclingquote (%)',
+          data: [30,32,35,38,40,42],
+          backgroundColor: '#64b5f6',
+          borderColor: '#2196f3',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          title: { display: true, text: 'Recyclingquote in Deutschland (2010 - 2020)' },
+          tooltip: { callbacks: { label: context => context.parsed.y + ' %' } }
+        },
+        scales: { y: { beginAtZero: true, max: 50, title: { display: true, text: 'Prozent' } } }
+      }
+    });
+    
+    // Statistik 3: Export von nicht recycelten Abfällen (Balkendiagramm)
+    const ctxExport = document.getElementById('wasteExportChart').getContext('2d');
+    new Chart(ctxExport, {
+      type: 'bar',
+      data: {
+        labels: ['2010', '2012', '2014', '2016', '2018', '2020'],
+        datasets: [{
+          label: 'Export (Tsd. Tonnen)',
+          data: [600,650,700,750,780,800],
+          backgroundColor: '#ffb74d',
+          borderColor: '#fb8c00',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          title: { display: true, text: 'Export von nicht recycelten Abfällen (2010 - 2020)' },
+          tooltip: { callbacks: { label: context => context.parsed.y + ' Tsd. Tonnen' } }
+        },
+        scales: { y: { beginAtZero: true, title: { display: true, text: 'Tsd. Tonnen' } } }
+      }
+    });
+    
+    // Statistik 4: Anteil von Plastik auf Deponien (Doughnut-Diagramm)
+    const ctxLandfill = document.getElementById('landfillChart').getContext('2d');
+    new Chart(ctxLandfill, {
+      type: 'doughnut',
+      data: {
+        labels: ['2010: 45%', '2020: 30%'],
+        datasets: [{
+          label: 'Deponieanteil',
+          data: [45,30],
+          backgroundColor: ['#e57373', '#81c784'],
+          borderColor: ['#f44336', '#4caf50'],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          title: { display: true, text: 'Anteil des Plastiks auf Deponien in Europa (2010 vs. 2020)' },
+          tooltip: { callbacks: { label: context => context.label } }
+        }
+      }
+    });
+    
+    // Statistik 5: Investitionen in Recyclingtechnologien (Liniendiagramm)
+    const ctxInvestment = document.getElementById('investmentChart').getContext('2d');
+    new Chart(ctxInvestment, {
+      type: 'line',
+      data: {
+        labels: ['2010','2012','2014','2016','2018','2020'],
+        datasets: [{
+          label: 'Investitionen (Mrd. €)',
+          data: [2,2.5,3,4,6,8],
+          borderColor: '#ff8a65',
+          backgroundColor: 'rgba(255,138,101,0.2)',
+          fill: true,
+          tension: 0.3,
+          borderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          title: { display: true, text: 'Investitionen in Recyclingtechnologien (2010 - 2020)' },
+          tooltip: { callbacks: { label: context => context.parsed.y + ' Mrd. €' } }
+        },
+        scales: { y: { beginAtZero: true, title: { display: true, text: 'Mrd. €' } } }
+      }
+    });
+  </script>
+  
+  <!-- JavaScript: Erweiterter Events-Bereich -->
+  <script>
+    const addEventButton = document.getElementById('addEventButton');
+    const eventFormContainer = document.getElementById('eventFormContainer');
+    const verifyCodeButton = document.getElementById('verifyCodeButton');
+    const adminCodeInput = document.getElementById('adminCode');
+    const eventForm = document.getElementById('eventForm');
+    const submitEventButton = document.getElementById('submitEventButton');
+    const eventsContainer = document.getElementById('eventsContainer');
+
+    addEventButton.addEventListener('click', () => {
+      // Formular anzeigen oder verbergen und Eingaben zurücksetzen
+      eventFormContainer.style.display = eventFormContainer.style.display === "block" ? "none" : "block";
+      eventForm.style.display = "none";
+      adminCodeInput.value = "";
+    });
+
+    verifyCodeButton.addEventListener('click', () => {
+      if(adminCodeInput.value.trim() === "15022008Em") {
+        eventForm.style.display = "block";
+      } else {
+        alert("Falscher Code. Zugriff verweigert.");
+        eventForm.style.display = "none";
+      }
+    });
+
+    submitEventButton.addEventListener('click', () => {
+      // Neue Felder abrufen
+      const title = document.getElementById('eventTitle').value.trim();
+      const date = document.getElementById('eventDate').value;
+      const time = document.getElementById('eventTime').value;
+      const summary = document.getElementById('eventSummary').value.trim();
+      const details = document.getElementById('eventDetails').value.trim();
+      const country = document.getElementById('eventCountry').value.trim();
+      const city = document.getElementById('eventCity').value.trim();
+      const venue = document.getElementById('eventVenue').value.trim();
+      const street = document.getElementById('eventStreet').value.trim();
+      const number = document.getElementById('eventNumber').value.trim();
+      const postalCode = document.getElementById('eventPostalCode').value.trim();
+
+      // Prüfen, ob alle Felder ausgefüllt wurden
+      if(!title || !date || !time || !summary || !details || !country || !city || !venue || !street || !number || !postalCode) {
+        alert("Bitte füllen Sie alle Felder aus.");
+        return;
+      }
+      
+      // Neue Event-Box erstellen
+      const eventBox = document.createElement('div');
+      eventBox.className = "event-box";
+      eventBox.innerHTML = `
+        <div class="event-header"></div>
+        <div class="event-date">Datum:  um </div>
+        <div class="event-location">Ort: , , ,  , </div>
+        <div class="event-summary"></div>
+        <div class="event-details"></div>
+      `;
+      
+      // Klick auf Event-Box: Details ein-/ausblenden
+      eventBox.addEventListener('click', () => {
+        const ed = eventBox.querySelector('.event-details');
+        ed.style.display = ed.style.display === "block" ? "none" : "block";
+      });
+      eventsContainer.appendChild(eventBox);
+      
+      // Felder zurücksetzen und Formular ausblenden
+      document.getElementById('eventTitle').value = "";
+      document.getElementById('eventDate').value = "";
+      document.getElementById('eventTime').value = "";
+      document.getElementById('eventSummary').value = "";
+      document.getElementById('eventDetails').value = "";
+      document.getElementById('eventCountry').value = "";
+      document.getElementById('eventCity').value = "";
+      document.getElementById('eventVenue').value = "";
+      document.getElementById('eventStreet').value = "";
+      document.getElementById('eventNumber').value = "";
+      document.getElementById('eventPostalCode').value = "";
+      eventForm.style.display = "none";
+      eventFormContainer.style.display = "none";
+    });
+  </script>
+  
+  <!-- JavaScript: Karriere-Bewerbungsformular mit Altersprüfung und Dateiupload -->
+  <script>
+    const bewerbungsForm = document.getElementById('bewerbungsForm');
+    bewerbungsForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const alter = parseInt(document.getElementById('bewerberAlter').value, 10);
+      if(alter < 18) {
+        alert("Sie müssen mindestens 18 Jahre alt sein, um sich zu bewerben.");
+        return;
+      }
+      // Hier könnte zusätzlich der Dateiupload validiert werden.
+      alert("Ihre Bewerbung wurde abgesendet. Wir melden uns in Kürze.");
+      bewerbungsForm.reset();
+    });
+  </script>
+</body>
+</html>
